@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý từ vựng cá nhân</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h2 {
+            color: #4CAF50;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        ul li .delete {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        ul li .delete:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Quản lý từ vựng học tập</h1>
+    </header>
+
+    <main>
+        <section id="add-vocab">
+            <h2>Thêm từ mới</h2>
+            <form id="vocab-form">
+                <label for="word">Từ:</label>
+                <input type="text" id="word" required>
+
+                <label for="definition">Định nghĩa:</label>
+                <input type="text" id="definition" required>
+
+                <button type="submit">Thêm từ</button>
+            </form>
+        </section>
+
+        <section id="vocab-list">
+            <h2>Từ vựng đã lưu</h2>
+            <ul id="vocab-collection">
+                <!-- Danh sách từ sẽ được hiển thị ở đây -->
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Quản lý từ vựng cá nhân</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const vocabForm = document.getElementById('vocab-form');
+            const vocabCollection = document.getElementById('vocab-collection');
+
+            // Tải danh sách từ vựng từ localStorage
+            let vocabList = JSON.parse(localStorage.getItem('vocabList')) || [];
+
+            // Hiển thị danh sách từ vựng
+            function renderVocabList() {
+                vocabCollection.innerHTML = '';
+                vocabList.forEach((vocab, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                <strong>${vocab.word}</strong>: ${vocab.definition}
+                <button class="delete" data-index="${index}">Xóa</button>
+            `;
+                    vocabCollection.appendChild(li);
+                });
+            }
+
+            // Thêm từ mới
+            vocabForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const word = document.getElementById('word').value;
+                const definition = document.getElementById('definition').value;
+
+                // Thêm từ mới vào danh sách và localStorage
+                vocabList.push({ word, definition });
+                localStorage.setItem('vocabList', JSON.stringify(vocabList));
+
+                // Làm mới danh sách hiển thị và form nhập liệu
+                renderVocabList();
+                vocabForm.reset();
+            });
+
+            // Xóa từ
+            vocabCollection.addEventListener('click', function (e) {
+                if (e.target.classList.contains('delete')) {
+                    const index = e.target.getAttribute('data-index');
+                    vocabList.splice(index, 1);
+                    localStorage.setItem('vocabList', JSON.stringify(vocabList));
+                    renderVocabList();
+                }
+            });
+
+            // Hiển thị từ vựng khi trang được load
+            renderVocabList();
+        });
+
+    </script>
+</body>
+
+</html>
